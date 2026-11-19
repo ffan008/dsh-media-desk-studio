@@ -3,6 +3,8 @@
 import { lang } from './i18n.js'
 
 const KEY = 'dsh-media-desk-studio/flow-v1'
+// 从旧版（dsh-media-desk）升级时一次性接管创作流程草稿
+const LEGACY_KEY = 'dsh-media-desk/flow-v1'
 
 /** 五步流程的静态知识：要点、工具、公式都来自「新手做口播短视频全流程拆解」。 */
 export const STEPS = [
@@ -156,6 +158,17 @@ function write(data) {
 export function loadFlowState() {
   const data = read()
   if (data) return data
+  // 新 key 为空时，尝试从旧版 key 迁移一次，保住已写的创作流程草稿
+  try {
+    const legacy = localStorage.getItem(LEGACY_KEY)
+    if (legacy) {
+      const parsed = JSON.parse(legacy)
+      if (parsed && Array.isArray(parsed.flows)) {
+        write(parsed)
+        return parsed
+      }
+    }
+  } catch { /* 旧数据坏了就当没有 */ }
   const fresh = { activeId: null, flows: [] }
   write(fresh)
   return fresh
