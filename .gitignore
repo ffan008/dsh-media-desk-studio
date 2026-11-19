@@ -1,0 +1,5 @@
+node_modules/
+# dist/ 随仓库分发：别人 clone / 从 git 安装后无需自行构建即可使用
+*.tgz
+.DS_Store
+index.json.tmp
