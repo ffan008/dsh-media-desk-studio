@@ -315,6 +315,27 @@ export async function monidStatus() {
   }
 }
 
+export async function crawlerStatus(base) {
+  try {
+    return await request(`mediacrawler/status${base ? `?base=${encodeURIComponent(base)}` : ''}`)
+  } catch (err) {
+    return { state: 'error', message: err.message }
+  }
+}
+
+export async function importTopics(payload) {
+  try {
+    const data = await request('mediacrawler/search', payload)
+    setDesk({ state: data.state, canUndo: true })
+    const what = t(plural(data.total || 0, '抓到 1 条{platform}内容，新增 {added} 条到灵感墙', '抓到 {total} 条{platform}内容，新增 {added} 条到灵感墙'), { platform: t(data.platform), total: data.total, added: data.added })
+    toast(t('{what}，已更新 {updated} 条', { what, updated: data.updated }), { undo: true })
+    return true
+  } catch (err) {
+    report(err)
+    return false
+  }
+}
+
 export async function importAccount(payload) {
   try {
     const data = await request('monid/import', payload)

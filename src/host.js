@@ -12,6 +12,7 @@ import { generateToolImage, imageTool } from './image-tool.js'
 import { localIntent } from './intents.js'
 import { computeInsights, exportSkill, proposeRules } from './learn.js'
 import { createMonidRunner, fetchAccount, importPosts, monidStatus, postsToMaterial, resolveAccount, saveCovers } from './monid.js'
+import { crawlerStatus, importTopics, searchByKeyword } from './mediacrawler.js'
 import { applyOps, newId } from './ops.js'
 import { applyRevision, Producer } from './produce.js'
 import { publicSettings, Settings, imageReady } from './settings.js'
@@ -192,6 +193,23 @@ async function extractStyle(ctx, store, body) {
   return styleFromMaterial(ctx, store, { material, name, source, sourceUrls: urls, failures })
 }
 
+/** 按关键词抓一批选题并写进灵感墙。免费（本地爬虫），不花 Monid 余额。 */
+async function importTopicsRoute(ctx, store, body) {
+  const result = await searchByKeyword({
+    base: body.base,
+    platform: body.platform,
+    keywords: body.keywords,
+    limit: body.limit,
+    wantComments: body.wantComments,
+  })
+  if (!result.posts.length) {
+    throw Object.assign(new Error(tr('没抓到内容。可能是没登录，或者这个关键词在{platform}上没有结果', { platform: result.platform })), { status: 404 })
+  }
+  const keyword = result.keywords[0] ?? ''
+  const counts = await store.mutate(tr('按关键词抓选题「{keyword}」', { keyword }), draft => importTopics(draft, { posts: result.posts, keyword }))
+  return { ...counts, total: result.total, keywords: result.keywords, platform: result.platform }
+}
+
 /** 提炼一张风格卡并设为当前风格。同一个账号再抓一次时更新原来那张。 */
 async function styleFromMaterial(ctx, store, { material, name, source, sourceUrls = [], failures = [], accountKey = null }) {
   let style
@@ -328,6 +346,7 @@ async function route(ctx, store, desk, req, res) {
     }
     if (path === 'insights') return json(res, 200, computeInsights(await store.read()))
     if (path === 'monid/status') return json(res, 200, await monidStatus(desk.monid))
+    if (path === 'mediacrawler/status') return json(res, 200, await crawlerStatus(String(url.searchParams.get('base') ?? '')))
     if (path === 'version') return json(res, 200, await desk.versionCheck.read())
     return json(res, 404, { error: tr('接口不存在') })
   }
@@ -400,6 +419,7 @@ async function route(ctx, store, desk, req, res) {
     }
     case 'style/extract': return json(res, 200, await extractStyle(ctx, store, body))
     case 'monid/import': return json(res, 200, await importAccountRoute(ctx, store, desk, body))
+    case 'mediacrawler/search': return json(res, 200, await importTopicsRoute(ctx, store, body))
     case 'settings': {
       const before = modelInfo(ctx)
       const updated = await desk.settings.update(body)

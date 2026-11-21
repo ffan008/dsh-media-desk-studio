@@ -2,6 +2,7 @@
 import React from 'react'
 import { dispatchOps, fetchInsights, learnSkills, openItem, setDesk, toast, useDesk } from './desk.js'
 import { ConnectDialog } from './connect.jsx'
+import { TopicDialog } from './topic.jsx'
 import { EN } from './en/index.js'
 import { lang, plural, t, useLang } from './i18n.js'
 import { Icon, Segmented } from './ui.jsx'
@@ -159,6 +160,7 @@ export function InsightsView() {
   const [data, setData] = React.useState(null)
   const [show, setShow] = React.useState('chart')
   const [connecting, setConnecting] = React.useState(false)
+  const [topicOpen, setTopicOpen] = React.useState(false)
   const accounts = useDesk(s => s.state.accounts)
   React.useEffect(() => {
     let alive = true
@@ -174,12 +176,14 @@ export function InsightsView() {
   const maxBar = Math.max(1, ...data.platforms.map(p => p[barKey]))
   const realAccounts = accounts.some(row => row.externalId)
   const dialog = connecting ? <ConnectDialog onClose={() => setConnecting(false)} /> : null
+  const topicDialog = topicOpen ? <TopicDialog onClose={() => setTopicOpen(false)} /> : null
   const best = data.top[0]
   const bestItem = best && items.find(i => i.id === best.id)
   const heroPic = bestItem && posterOf(displayItem(bestItem))
   const actions = (
     <div className="md-hero-actions">
       <button type="button" className="md-pill is-primary" onClick={() => setConnecting(true)}><Icon name="user" size={14} />{t('导入账号数据')}</button>
+      <button type="button" className="md-pill is-primary" onClick={() => setTopicOpen(true)}><Icon name="search" size={14} />{t('按关键词找选题')}</button>
       <button type="button" className="md-pill" onClick={() => addMetric(items)}><Icon name="plus" size={14} />{t('录入数据')}</button>
       <button type="button" className="md-pill" onClick={importCsv}><Icon name="upload" size={14} />{t('粘贴 CSV')}</button>
     </div>
@@ -194,6 +198,7 @@ export function InsightsView() {
           </div>
         </section>
         {dialog}
+        {topicDialog}
       </div>
     )
   }
@@ -284,6 +289,7 @@ export function InsightsView() {
         </section>
       </div>
       {dialog}
+        {topicDialog}
     </div>
   )
 }
