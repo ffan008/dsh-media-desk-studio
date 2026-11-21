@@ -217,6 +217,10 @@ export function CockpitView() {
     <div className="md-page sb-board">
       <header className="md-page-head sb-head">
         <div><h1>{t('驾驶舱')}</h1><p className="md-page-sub">{t('打开就看见全局：今天、管线、灵感、排期，一目了然')}</p></div>
+        <span style={{ flex: 1 }} />
+        <button type="button" className="md-btn sb-back" onClick={() => setDesk({ mode: 'scatter' })}>
+          <Icon name="chevL" size={14} /> {t('返回灵感墙')}
+        </button>
       </header>
       <TodayCard items={items} />
       <PipelineCard counts={counts} />

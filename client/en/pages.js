@@ -355,6 +355,7 @@ export const PAGES = {
   // 驾驶舱（cockpit.jsx）
   '驾驶舱': 'Cockpit',
   '打开就看见全局：今天、管线、灵感、排期，一目了然': 'See it all at a glance: today, pipeline, ideas and schedule',
+  '返回灵感墙': 'Back to ideas',
   '今日新增': 'New today',
   '今日排期': 'Scheduled today',
   '内容总数': 'Total pieces',
