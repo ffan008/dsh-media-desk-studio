@@ -8,6 +8,7 @@ import { MiniStamps } from './stamps.jsx'
 import { cardSize, scatterLayout } from './layout.js'
 import { relatedIdeas, relatedLayout } from './related.js'
 import { SPRING_SOFT, computeStreak, displayItem, hash, posterOf, reducedMotion, isIdea } from './util.js'
+import { CockpitView } from './cockpit.jsx'
 
 function useCamera(stageRef, worldRef) {
   const cam = React.useRef({ x: 0, y: 0, s: 1, vx: 0, vy: 0, vs: 0, tx: 0, ty: 0, ts: 1, raf: 0 })
@@ -446,6 +447,7 @@ const KIND_OPTIONS = [{ value: 'all', label: '全部' }, { value: 'image', label
 export function HomeView() {
   const mode = useDesk(s => s.mode)
   const kind = useDesk(s => s.kindFilter)
+  if (mode === 'cockpit') return <CockpitView />
   return (
     <div className="md-home">
       {mode === 'feed' ? <Feed /> : <Scatter />}
@@ -454,7 +456,11 @@ export function HomeView() {
           label={t('展示方式')}
           value={mode}
           onChange={value => setDesk({ mode: value })}
-          options={[{ value: 'scatter', icon: 'scatter', title: t('散落') }, { value: 'feed', icon: 'wall', title: t('信息流') }]}
+          options={[
+            { value: 'cockpit', icon: 'target', title: t('驾驶舱') },
+            { value: 'scatter', icon: 'scatter', title: t('散落') },
+            { value: 'feed', icon: 'wall', title: t('信息流') },
+          ]}
         />
         <span className="md-dockbar-sep" />
         <div className="md-chips">

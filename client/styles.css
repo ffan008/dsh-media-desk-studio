@@ -957,3 +957,132 @@ button.md-receipt:hover { transform: translateX(2px); }
   .md-flow-step-label small { display: none; }
   .md-flow-title-row .md-seg { order: 3; }
 }
+
+/* ───────────────────────── 驾驶舱 Cockpit ───────────────────────── */
+/* 借鉴 obsidian-ai-dashboard：12 列网格、圆角物件卡、玉绿强调、深色焦点卡、
+   等宽小标签、点阵纹理。颜色走 DSH 语义 token，深浅主题都能看。 */
+.md-root .md-page.sb-board {
+  --sb-jade: #0E8F6E;
+  --sb-jade2: #0B7A5E;
+  --sb-mint1: #BFEBDC;
+  --sb-mint2: #E6F7F1;
+  --sb-mono: "Space Mono", ui-monospace, Menlo, monospace;
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  grid-auto-rows: minmax(210px, auto);
+  gap: 14px;
+  padding: 78px 24px 40px;
+  align-content: start;
+  container-type: inline-size;
+}
+.sb-head { grid-column: 1 / -1; margin-bottom: 2px; }
+.sb-head h1 { letter-spacing: -.02em; }
+
+.sb-tile {
+  position: relative; display: flex; flex-direction: column; min-width: 0; min-height: 0;
+  padding: 24px 22px 16px; border-radius: 22px; overflow: hidden;
+  background: var(--card); border: .5px solid var(--line-strong);
+  box-shadow: var(--dsw-elevation-soft);
+  animation: md-rise .5s var(--ease) both;
+}
+.sb-tile:nth-of-type(2) { animation-delay: .04s; }
+.sb-tile:nth-of-type(3) { animation-delay: .08s; }
+.sb-tile:nth-of-type(4) { animation-delay: .12s; }
+.sb-tile:nth-of-type(5) { animation-delay: .16s; }
+.sb-tile:nth-of-type(6) { animation-delay: .2s; }
+.sb-tile:nth-of-type(7) { animation-delay: .24s; }
+
+/* 顶部拖动条意象 + 右上标签 */
+.sb-handle { position: absolute; top: 9px; left: 50%; transform: translateX(-50%); width: 40px; height: 4px; border-radius: 3px; background: var(--line-strong); opacity: .7; }
+.sb-tag { position: absolute; right: 18px; bottom: 12px; font: 400 10px var(--sb-mono); letter-spacing: 2px; color: var(--ink4); text-transform: uppercase; }
+.sb-tile-h { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 500; color: var(--ink2); }
+.sb-tile-h svg { color: var(--sb-jade); }
+.sb-hint { margin-left: auto; font: 400 11px var(--sb-mono); color: var(--ink4); letter-spacing: .5px; }
+.sb-count { margin-left: auto; font: 700 14px var(--sb-mono); color: var(--sb-jade); }
+.sb-foot { margin: auto 0 0; padding-top: 10px; font-size: 12px; line-height: 18px; color: var(--ink3); }
+
+/* 01 今日：跨 8 列 */
+.sb-today { grid-column: 1 / 9; grid-row: 1; display: grid; grid-template-columns: 1.1fr 1fr; column-gap: 26px; align-content: start; }
+.sb-today .sb-tile-h { grid-column: 1 / -1; }
+.sb-big { font: 800 clamp(48px, 7cqw, 88px)/1 var(--cn, inherit); letter-spacing: -.04em; margin: 8px 0 2px; }
+.sb-big b { color: var(--sb-jade); }
+.sb-big small { font: 500 clamp(20px, 2.4cqw, 30px) var(--sb-mono); color: var(--ink3); margin-left: 4px; letter-spacing: 0; }
+.sb-today-stat { display: flex; gap: 24px; align-self: center; }
+.sb-today-stat div { display: flex; flex-direction: column; gap: 2px; }
+.sb-today-stat b { font: 700 30px/1 var(--sb-mono); color: var(--ink); }
+.sb-today-stat span { font-size: 12px; color: var(--ink3); }
+.sb-today .sb-foot { grid-column: 1 / -1; }
+
+/* 02 管线：跨 4 列 */
+.sb-pipeline { grid-column: 9 / 13; grid-row: 1; }
+.sb-pipe-track { display: flex; flex-direction: column; gap: 6px; margin-top: 12px; }
+.sb-pipe-step { position: relative; display: grid; grid-template-columns: 28px 1fr auto; align-items: center; gap: 10px; padding: 6px 8px; border-radius: 12px; text-align: left; overflow: hidden; transition: background .15s; }
+.sb-pipe-step:hover { background: var(--hover); }
+.sb-pipe-dot { display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 9px; background: var(--hover); color: var(--ink2); }
+.sb-pipe-step b { font: 700 18px var(--sb-mono); color: var(--ink); }
+.sb-pipe-step small { font-size: 12px; color: var(--ink3); }
+.sb-pipe-step i { position: absolute; left: 0; bottom: 0; height: 3px; background: var(--sb-jade); border-radius: 3px; transition: width .5s var(--ease); }
+.sb-tone-idea .sb-pipe-dot { color: #8a8f99; }
+.sb-tone-outline .sb-pipe-dot { color: #d39a2c; }
+.sb-tone-draft .sb-pipe-dot { color: #4176e6; }
+.sb-tone-ready .sb-pipe-dot { color: #8a5fe0; }
+.sb-tone-published .sb-pipe-dot { color: #2fa36c; }
+
+/* 03 创作流程：深色焦点卡，跨 5 列 */
+.sb-flow { grid-column: 1 / 6; grid-row: 2; background: #0E1114; color: #fff; border-color: transparent; --ink2: #8A8F99; --ink3: #8A8F99; }
+.sb-flow .sb-tile-h { color: #c9cdd4; }
+.sb-flow .sb-tile-h svg { color: var(--sb-mint1); }
+.sb-flow .sb-tag { color: #555b63; }
+.sb-flow-now { display: flex; align-items: flex-end; gap: 14px; margin: 12px 0 8px; }
+.sb-flow-stepno { font: 800 clamp(56px, 7cqw, 88px)/.9 var(--sb-mono); color: #fff; letter-spacing: -2px; }
+.sb-flow-now > div { display: flex; flex-direction: column; padding-bottom: 6px; }
+.sb-flow-now small { font: 400 11px var(--sb-mono); letter-spacing: 2px; color: #6f767f; text-transform: uppercase; }
+.sb-flow-now b { font-size: 20px; font-weight: 600; margin-top: 2px; }
+.sb-flow-rail { display: flex; gap: 6px; margin-top: auto; }
+.sb-flow-rail i { flex: 1; height: 6px; border-radius: 3px; background: rgba(255,255,255,.14); }
+.sb-flow-rail i.on { background: var(--sb-jade); }
+.sb-flow-rail i.now { background: var(--sb-mint1); }
+.sb-flow-title { margin: 12px 0 0; font-size: 14px; color: #c9cdd4; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sb-flow .sb-foot { color: #6f767f; }
+.sb-btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; align-self: flex-start; margin-top: 10px; padding: 8px 14px; border-radius: 10px; background: var(--sb-jade); color: #fff; font-size: 13px; font-weight: 500; transition: background .15s; }
+.sb-btn:hover { background: var(--sb-jade2); }
+
+/* 04 灵感池 / 06 排期：各跨 4 列 */
+.sb-ideas { grid-column: 6 / 10; grid-row: 2; }
+.sb-schedule { grid-column: 10 / 13; grid-row: 2; }
+.sb-list { list-style: none; margin: 10px 0 0; padding: 0; overflow-y: auto; min-height: 0; }
+.sb-list li { border-top: 1px solid var(--line); }
+.sb-list li:first-child { border-top: 0; }
+.sb-list button { display: flex; align-items: center; gap: 10px; width: 100%; padding: 9px 2px; text-align: left; color: var(--ink); font-size: 13.5px; line-height: 1.4; }
+.sb-list button:hover .sb-txt { color: var(--sb-jade); }
+.sb-bullet { flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--sb-mint1); box-shadow: inset 0 0 0 1px var(--sb-jade); }
+.sb-txt { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sb-when { flex: none; font: 500 11px var(--sb-mono); color: var(--sb-jade); min-width: 34px; }
+.sb-empty { margin: 14px 0; color: var(--ink3); font-size: 13px; }
+
+/* 05 渠道脉搏：跨 5 列 */
+.sb-channels { grid-column: 1 / 6; grid-row: 3; }
+.sb-bars { list-style: none; margin: 14px 0 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+.sb-bars li { display: grid; grid-template-columns: 64px 1fr 28px; align-items: center; gap: 10px; }
+.sb-bar-label { font-size: 12.5px; color: var(--ink2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sb-bar-track { height: 8px; border-radius: 4px; background: var(--hover); overflow: hidden; }
+.sb-bar-track i { display: block; height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--sb-mint1), var(--sb-jade)); transition: width .5s var(--ease); }
+.sb-bars b { font: 700 13px var(--sb-mono); color: var(--ink); text-align: right; }
+
+/* 07 快捷动作：薄荷纹理卡，跨 7 列 */
+.sb-actions { grid-column: 6 / 13; grid-row: 3; background: linear-gradient(160deg, var(--sb-mint1), var(--sb-mint2) 70%, color-mix(in srgb, var(--sb-mint2) 60%, #fff)); border-color: color-mix(in srgb, var(--sb-jade) 15%, transparent); color: #121417; }
+.sb-actions .sb-tile-h, .sb-actions .sb-tile-h svg { color: var(--sb-jade2); }
+.sb-actions .sb-tag, .sb-actions .sb-foot { color: var(--sb-jade2); }
+.sb-action-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 14px; }
+.sb-action-grid button { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 16px 6px; border-radius: 14px; background: rgba(255,255,255,.7); color: var(--sb-jade2); font-size: 12.5px; transition: transform .25s cubic-bezier(.2,1.4,.4,1), background .15s; }
+.sb-action-grid button:hover { transform: translateY(-3px); background: #fff; }
+
+@media (max-width: 1080px) {
+  .md-root .md-page.sb-board { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .sb-today, .sb-ideas, .sb-schedule, .sb-channels, .sb-actions, .sb-flow, .sb-pipeline { grid-column: span 6; grid-row: auto; }
+}
+@media (max-width: 780px) {
+  .md-root .md-page.sb-board { display: flex; flex-direction: column; padding: 58px 14px 30px; }
+  .sb-tile { min-height: 180px; }
+  .sb-action-grid { grid-template-columns: repeat(2, 1fr); }
+}
